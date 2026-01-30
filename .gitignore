@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.log
+*.zip
+.venv/
+venv/
+.env
+.DS_Store
+gitdir/
+.git/
