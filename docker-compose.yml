@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  soc-toolkit:
+    build: .
+    container_name: defensive-soc-toolkit
+    ports:
+      - "8765:8765"
+    volumes:
+      - .:/app
+    environment:
+      - PORT=8765
+    restart: unless-stopped

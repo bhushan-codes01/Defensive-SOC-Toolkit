@@ -8,13 +8,17 @@ function escapeHtml(value) {
 }
 
 async function api(path, options = {}) {
-  const response = await fetch(path, {headers: {"Content-Type": "application/json"}, ...options});
+  const response = await fetch(path, {
+    headers: options.body instanceof FormData ? {} : {"Content-Type": "application/json"},
+    ...options
+  });
   const data = await response.json();
   if (!response.ok || data.error) throw new Error(data.error || "Request failed");
   return data;
 }
 
 function setLoading(button, loading) {
+  if (!button) return;
   button.disabled = loading;
   button.dataset.originalText ||= button.textContent;
   button.textContent = loading ? "Working..." : button.dataset.originalText;
@@ -23,17 +27,12 @@ function setLoading(button, loading) {
 function item(title, body, tags = [], link) {
   const tagHtml = tags.map((tag) => `<span class="tag ${escapeHtml(tag.class || "")}">${escapeHtml(tag.text || tag)}</span>`).join("");
   const linkHtml = link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noreferrer">Open source</a>` : "";
-  return `<article class="item"><strong>${escapeHtml(title)}</strong><p>${escapeHtml(body)}</p><div class="row">${tagHtml}${linkHtml}</div></article>`;
+  return `<article class="item" style="margin-bottom:12px; padding:12px; background:#111; border-radius:6px; border:1px solid #222;"><strong>${escapeHtml(title)}</strong><p style="margin:6px 0; color:#ccc;">${escapeHtml(body)}</p><div class="row" style="display:flex; gap:8px;">${tagHtml}${linkHtml}</div></article>`;
 }
 
-function renderError(target, error) {
-  target.innerHTML = item("Could not complete request", error.message, [{text: "check input", class: "high"}]);
-}
-
+// Tab Switching
 $$(".tab").forEach((button) => {
-  button.addEventListener("click", () => {
-    activateTab(button.dataset.tab);
-  });
+  button.addEventListener("click", () => activateTab(button.dataset.tab));
 });
 
 $$(".hero-tab").forEach((button) => {
@@ -44,173 +43,270 @@ function activateTab(name) {
   $$(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === name));
   $$(".panel").forEach((panel) => panel.classList.toggle("active", panel.id === name));
   window.scrollTo({top: 0, behavior: "smooth"});
+
+  if (name === "packets") loadPackets();
+  if (name === "detection") loadAlerts();
+  if (name === "topology") loadTopology();
+  if (name === "chain") loadChain();
+  if (name === "iot") loadIoT();
+  if (name === "response") loadIncidents();
 }
 
-function animateScene() {
-  const scene = $("#heroScene");
-  const stage = $(".cyber-stage");
-  if (!scene || !stage) return;
-  const rect = scene.getBoundingClientRect();
-  const viewport = window.innerHeight || 1;
-  const progress = Math.min(1, Math.max(0, (viewport - rect.top) / (viewport + rect.height)));
-  const rotateY = -12 + progress * 6;
-  const lift = progress * -14;
-  const scale = window.innerWidth < 820 ? 0.86 : 1;
-  stage.style.transform = `rotateX(7deg) rotateY(${rotateY}deg) translateY(${lift}px) scale(${scale})`;
-}
-
-window.addEventListener("scroll", animateScene, {passive: true});
-window.addEventListener("resize", animateScene);
-animateScene();
-
-async function loadThreats() {
-  const button = $("#refreshThreats");
-  if (button) setLoading(button, true);
+// 1. Packet Analyzer
+async function loadPackets() {
   try {
-    const data = await api("/api/threats");
-    
-    if ($("#activeAlertCount")) $("#activeAlertCount").textContent = data.kev.length;
-    if ($("#highAlertCount")) $("#highAlertCount").textContent = data.advisories.length + data.maliciousUrls.length;
-    
-    const incidentsBody = $("#criticalIncidentsBody");
-    if (incidentsBody) {
-      incidentsBody.innerHTML = data.kev.slice(0, 5).map((v, index) => `
-        <tr>
-          <td>10${index}</td>
-          <td><span class="priority-tag">Critical</span></td>
-          <td>${escapeHtml(v.vulnerabilityName).slice(0, 22)}...</td>
-          <td><span class="status-tag">Mitigated</span></td>
+    const data = await api("/api/packets");
+    if ($("#totalPacketsCount")) $("#totalPacketsCount").textContent = data.total_packets;
+    if ($("#protocolBreakdown")) $("#protocolBreakdown").textContent = JSON.stringify(data.protocol_breakdown, null, 2);
+    if ($("#topTalkers")) $("#topTalkers").textContent = JSON.stringify(data.top_talkers, null, 2);
+
+    const tbody = $("#packetsTableBody");
+    if (tbody && data.packets) {
+      tbody.innerHTML = data.packets.map(p => `
+        <tr style="border-bottom: 1px solid #222;">
+          <td><b style="color:#00b0ff;">${escapeHtml(p.protocol)}</b></td>
+          <td>${escapeHtml(p.src_ip || "0.0.0.0")}</td>
+          <td>${escapeHtml(p.dst_ip || "0.0.0.0")}</td>
+          <td>${p.src_port ? `${p.src_port} -> ${p.dst_port}` : "-"}</td>
+          <td>${p.packet_size} B</td>
+          <td style="color:#aaa;">${escapeHtml(p.info)}</td>
         </tr>
       `).join("");
     }
-    
-    const chart = $("#vulnChart");
-    if (chart) {
-      const low = Math.min(120, 30 + data.advisories.length * 3);
-      const med = Math.min(120, 40 + data.maliciousUrls.length * 4);
-      const high = Math.min(120, 50 + data.kev.length * 5);
-      const crit = Math.min(120, 60 + data.kev.length * 6);
-      chart.innerHTML = `
-        <div class="bar-col"><div class="bar low" style="height: ${low}px;"></div><small>Low</small></div>
-        <div class="bar-col"><div class="bar medium" style="height: ${med}px;"></div><small>Med</small></div>
-        <div class="bar-col"><div class="bar high" style="height: ${high}px;"></div><small>High</small></div>
-        <div class="bar-col"><div class="bar critical" style="height: ${crit}px;"></div><small>Crit</small></div>
-      `;
-    }
-    
-    if (data.maliciousUrls.length) {
-      const first = data.maliciousUrls[0];
-      if ($("#mapIpSource")) $("#mapIpSource").textContent = first.host || "198.51.100.45";
-      if ($("#mapAttackType")) $("#mapAttackType").textContent = first.threat || "Malware";
-    }
-
-  } catch (error) {
-    console.error("Threat feed metrics loading failed", error);
-  } finally {
-    if (button) setLoading(button, false);
+  } catch (err) {
+    console.error("Failed to load packets", err);
   }
 }
 
-if ($("#refreshThreats")) {
-  $("#refreshThreats").addEventListener("click", loadThreats);
-}
-
-$("#scanForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const button = event.submitter;
-  const target = $("#scanResults");
-  const ports = form.get("ports").split(",").map((p) => Number(p.trim())).filter(Boolean);
-  setLoading(button, true);
-  target.innerHTML = item("Scanning", "Checking selected ports on private/local targets only.");
-  try {
-    const data = await api("/api/scan", {method: "POST", body: JSON.stringify({target: form.get("target"), ports})});
-    if (!data.devices.length) {
-      target.innerHTML = item("No open ports found", `${data.targetCount} host(s) checked across ${data.scannedPorts.length} ports.`);
+// PCAP Upload Handler
+if ($("#btnUploadPcap")) {
+  $("#btnUploadPcap").addEventListener("click", async () => {
+    const fileInput = $("#pcapFileInput");
+    const statusBox = $("#pcapResultStatus");
+    if (!fileInput.files.length) {
+      statusBox.innerHTML = "<span style='color:#ff1744;'>Please select a .pcap file first.</span>";
       return;
     }
-    target.innerHTML = data.devices.map((device) => item(
-      device.host,
-      `${device.openPorts.length} open port(s) found.`,
-      device.openPorts.map((port) => ({text: `${port.port}/${port.service}`, class: port.risk})),
-    )).join("");
-  } catch (error) {
-    renderError(target, error);
-  } finally {
-    setLoading(button, false);
-  }
-});
+    const file = fileInput.files[0];
+    statusBox.innerHTML = "<span style='color:#00b0ff;'>Decoding PCAP file...</span>";
 
-$("#vulnForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const button = event.submitter;
-  const target = $("#vulnResults");
-  setLoading(button, true);
-  target.innerHTML = item("Searching", "Checking NVD records and marking CISA known exploited matches.");
+    try {
+      const buffer = await file.arrayBuffer();
+      const response = await fetch("/api/pcap/upload", {
+        method: "POST",
+        headers: {"Content-Type": "application/octet-stream"},
+        body: buffer
+      });
+      const resData = await response.json();
+      if (resData.error) throw new Error(resData.error);
+      statusBox.innerHTML = `<span style='color:#00e676;'>Successfully parsed ${resData.total_packets} packets (${resData.total_bytes} bytes)!</span>`;
+      loadPackets();
+    } catch (err) {
+      statusBox.innerHTML = `<span style='color:#ff1744;'>PCAP Error: ${escapeHtml(err.message)}</span>`;
+    }
+  });
+}
+
+// 2. Detection Engine
+async function loadAlerts() {
   try {
-    const data = await api("/api/vulns", {method: "POST", body: JSON.stringify({keyword: form.get("keyword")})});
-    target.innerHTML = data.items.map((v) => item(
-      v.id,
-      v.description,
-      [
-        {text: v.severity || "UNKNOWN", class: v.severity || ""},
-        {text: v.score ? `CVSS ${v.score}` : "no score"},
-        ...(v.knownExploited ? [{text: "known exploited", class: "high"}] : []),
-      ],
-      v.url,
-    )).join("") || item("No CVEs found", "NVD returned 0 results for this search.");
-  } catch (error) {
-    renderError(target, error);
-  } finally {
-    setLoading(button, false);
+    const alerts = await api("/api/alerts");
+    if ($("#activeAlertsCount")) $("#activeAlertsCount").textContent = alerts.length;
+    const container = $("#alertsContainer");
+    if (container) {
+      if (!alerts.length) {
+        container.innerHTML = "<p style='color:#888;'>No security alerts generated yet.</p>";
+        return;
+      }
+      container.innerHTML = alerts.map(a => item(
+        `[${a.severity}] ${a.title} (${a.rule_id})`,
+        `${a.description}\nEvidence: ${a.evidence}`,
+        [{text: a.mitre_technique || "MITRE", class: a.severity.toLowerCase()}, {text: `${a.src_ip} -> ${a.dst_ip}`}]
+      )).join("");
+    }
+  } catch (err) {
+    console.error("Failed to load alerts", err);
   }
-});
+}
 
-$("#logForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const button = event.submitter;
-  const target = $("#logResults");
-  setLoading(button, true);
+if ($("#btnRunDetection")) {
+  $("#btnRunDetection").addEventListener("click", async () => {
+    const btn = $("#btnRunDetection");
+    setLoading(btn, true);
+    try {
+      const result = await api("/api/detection/run", {method: "POST", body: "{}"});
+      alert(`Detection scan complete! Generated ${result.length} new alert(s).`);
+      loadAlerts();
+    } catch (err) {
+      alert(`Detection run error: ${err.message}`);
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+}
+
+// 3. Topology & OS Fingerprinting
+async function loadTopology() {
   try {
-    const data = await api("/api/logs", {method: "POST", body: JSON.stringify({logs: form.get("logs")})});
-    const indicators = data.indicators.map((hit) => item(
-      hit.label,
-      `Seen ${hit.count} time(s). Example line ${hit.exampleLine}: ${hit.example}`,
-      [{text: hit.type, class: hit.severity}],
-    ));
-    const ips = data.topIps.length ? item("Top IP addresses", data.topIps.map(([ip, count]) => `${ip} (${count})`).join(", ")) : "";
-    target.innerHTML = indicators.join("") + ips || item("No suspicious patterns found", `${data.lineCount} line(s) reviewed.`);
-  } catch (error) {
-    renderError(target, error);
-  } finally {
-    setLoading(button, false);
+    const data = await api("/api/topology");
+    if ($("#topologyNodes")) $("#topologyNodes").textContent = JSON.stringify(data, null, 2);
+  } catch (err) {
+    console.error("Failed to load topology", err);
   }
-});
+}
 
-$("#phishForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const button = event.submitter;
-  const target = $("#phishResults");
-  setLoading(button, true);
-  target.innerHTML = item("Checking", "Reviewing message patterns and looking up URLs in URLhaus.");
+if ($("#btnRunTraceroute")) {
+  $("#btnRunTraceroute").addEventListener("click", async () => {
+    const btn = $("#btnRunTraceroute");
+    setLoading(btn, true);
+    try {
+      const res = await api("/api/traceroute", {method: "POST", body: JSON.stringify({target: "8.8.8.8"})});
+      if ($("#tracerouteResult")) $("#tracerouteResult").textContent = JSON.stringify(res, null, 2);
+    } catch (err) {
+      if ($("#tracerouteResult")) $("#tracerouteResult").textContent = err.message;
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+}
+
+// 4. Audit Chain
+async function loadChain() {
   try {
-    const data = await api("/api/phishing", {method: "POST", body: JSON.stringify({text: form.get("text")})});
-    const urls = data.urls.map((u) => item(
-      u.host || u.url,
-      u.rules.join("; "),
-      [{text: u.risk, class: u.risk}, {text: u.urlhausStatus || "URLhaus checked"}],
-      u.urlhausReference,
-    ));
-    const textFindings = data.messageFindings.map((finding) => item("Message wording indicator", finding, [{text: "social engineering", class: "medium"}]));
-    target.innerHTML = [...textFindings, ...urls].join("") || item("No URL found", "Paste an email, SMS, or URL to check.");
-  } catch (error) {
-    renderError(target, error);
-  } finally {
-    setLoading(button, false);
+    const chain = await api("/api/chain");
+    const tbody = $("#chainTableBody");
+    if (tbody) {
+      tbody.innerHTML = chain.map(b => `
+        <tr style="border-bottom:1px solid #222;">
+          <td><b>#${b.block_index}</b></td>
+          <td>${new Date(b.timestamp * 1000).toLocaleTimeString()}</td>
+          <td><code style="font-size:0.8rem;">${b.payload_hash.slice(0, 16)}...</code></td>
+          <td><code style="font-size:0.8rem;">${b.prev_hash.slice(0, 16)}...</code></td>
+          <td><code style="font-size:0.8rem; color:#00e676;">${b.block_hash.slice(0, 16)}...</code></td>
+        </tr>
+      `).join("");
+    }
+  } catch (err) {
+    console.error("Failed to load chain", err);
   }
-});
+}
 
-loadThreats();
+if ($("#btnVerifyChain")) {
+  $("#btnVerifyChain").addEventListener("click", async () => {
+    const btn = $("#btnVerifyChain");
+    setLoading(btn, true);
+    try {
+      const res = await api("/api/chain/verify");
+      const box = $("#chainVerificationBox");
+      if (res.is_valid) {
+        box.innerHTML = `<span style="color:#00e676;">✔ Audit Chain Verified Complete! Total Blocks: ${res.total_blocks} | Merkle Root: ${res.merkle_root.slice(0, 16)}...</span>`;
+      } else {
+        box.innerHTML = `<span style="color:#ff1744;">✖ TAMPERING DETECTED! Broken Block Indices: [${res.broken_indices.join(", ")}]</span>`;
+      }
+    } catch (err) {
+      alert(`Audit verification failed: ${err.message}`);
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+}
+
+// 5. IoT Monitor
+async function loadIoT() {
+  try {
+    const data = await api("/api/iot/telemetry");
+    if ($("#iotTelemetryBox")) $("#iotTelemetryBox").textContent = JSON.stringify(data, null, 2);
+  } catch (err) {
+    console.error("Failed to load IoT telemetry", err);
+  }
+}
+
+if ($("#btnRefreshIoT")) {
+  $("#btnRefreshIoT").addEventListener("click", loadIoT);
+}
+
+// 6. Incident Response
+async function loadIncidents() {
+  try {
+    const data = await api("/api/incidents");
+    const container = $("#incidentsContainer");
+    if (container) {
+      container.innerHTML = data.map(inc => item(
+        `Incident #${inc.id}: ${inc.title}`,
+        `Status: ${inc.status} | Assigned: ${inc.assigned_to}\nNotes: ${inc.notes}`,
+        [{text: inc.severity, class: inc.severity.toLowerCase()}]
+      )).join("");
+    }
+  } catch (err) {
+    console.error("Failed to load incidents", err);
+  }
+}
+
+// Existing Action Handlers
+if ($("#btnScan")) {
+  $("#btnScan").addEventListener("click", async () => {
+    const targetVal = $("#scanTarget").value;
+    const btn = $("#btnScan");
+    setLoading(btn, true);
+    try {
+      const data = await api("/api/scan", {method: "POST", body: JSON.stringify({target: targetVal, ports: [21, 22, 23, 80, 443, 8080]})});
+      if ($("#scanResults")) $("#scanResults").textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      if ($("#scanResults")) $("#scanResults").textContent = err.message;
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+}
+
+if ($("#btnVuln")) {
+  $("#btnVuln").addEventListener("click", async () => {
+    const query = $("#vulnQuery").value;
+    const btn = $("#btnVuln");
+    setLoading(btn, true);
+    try {
+      const data = await api("/api/vulns", {method: "POST", body: JSON.stringify({keyword: query})});
+      if ($("#vulnResults")) $("#vulnResults").textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      if ($("#vulnResults")) $("#vulnResults").textContent = err.message;
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+}
+
+if ($("#btnAnalyzeLogs")) {
+  $("#btnAnalyzeLogs").addEventListener("click", async () => {
+    const logs = $("#logInput").value;
+    const btn = $("#btnAnalyzeLogs");
+    setLoading(btn, true);
+    try {
+      const data = await api("/api/logs", {method: "POST", body: JSON.stringify({logs})});
+      if ($("#logResults")) $("#logResults").textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      if ($("#logResults")) $("#logResults").textContent = err.message;
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+}
+
+if ($("#btnCheckPhish")) {
+  $("#btnCheckPhish").addEventListener("click", async () => {
+    const text = $("#phishInput").value;
+    const btn = $("#btnCheckPhish");
+    setLoading(btn, true);
+    try {
+      const data = await api("/api/phishing", {method: "POST", body: JSON.stringify({text})});
+      if ($("#phishResults")) $("#phishResults").textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      if ($("#phishResults")) $("#phishResults").textContent = err.message;
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+}
+
+// Initial overview loads
+loadPackets();
+loadAlerts();

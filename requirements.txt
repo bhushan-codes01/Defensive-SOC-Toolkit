@@ -1,2 +1,4 @@
-# No third-party Python packages required.
-# The toolkit runs on the Python standard library.
+# Core Dependencies
+scapy>=2.5.0
+paho-mqtt>=1.6.1
+pytest>=7.0.0

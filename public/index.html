@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Defensive-SOC-Toolkit</title>
-  <link rel="stylesheet" href="/style.css?v=7">
+  <title>Defensive SOC Toolkit — CN Monitoring & Threat Detection</title>
+  <link rel="stylesheet" href="/style.css?v=10">
 </head>
 <body>
   <div class="app-container">
@@ -13,8 +13,8 @@
       <div class="logo-area">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         <div>
-          <h2>DEFENSIVE</h2>
-          <small>SOC Toolkit</small>
+          <h2>DEFENSIVE SOC</h2>
+          <small>CN Threat Monitor</small>
         </div>
       </div>
       
@@ -22,6 +22,26 @@
         <button class="tab active" data-tab="overview">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           <span>Overview</span>
+        </button>
+        <button class="tab" data-tab="packets">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <span>Packet Analyzer</span>
+        </button>
+        <button class="tab" data-tab="detection">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Detection Engine</span>
+        </button>
+        <button class="tab" data-tab="topology">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span>Topology & OS</span>
+        </button>
+        <button class="tab" data-tab="chain">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <span>Audit Chain</span>
+        </button>
+        <button class="tab" data-tab="iot">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+          <span>IoT Monitor</span>
         </button>
         <button class="tab" data-tab="scanner">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 8v8"/></svg>
@@ -32,7 +52,7 @@
           <span>Vulnerabilities</span>
         </button>
         <button class="tab" data-tab="logs">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
           <span>Log Analysis</span>
         </button>
         <button class="tab" data-tab="phishing">
@@ -48,388 +68,233 @@
 
     <!-- Main Content -->
     <main class="main-view">
-      <!-- Top Header -->
       <header class="top-header">
         <div>
-          <div class="version-tag">Defensive-SOC-Toolkit v2.2</div>
-          <h1>OVERVIEW - REAL-TIME THREAT MONITOR</h1>
+          <div class="version-tag">CN Monitoring & Detection System v3.0 (NEP 2020)</div>
+          <h1 id="pageTitle">OVERVIEW - REAL-TIME THREAT MONITOR</h1>
         </div>
         <div class="header-actions">
-          <button id="refreshThreats" class="primary">Refresh live intel</button>
+          <a href="/api/incidents/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 8px 14px; border-radius: 6px; background: #00e676; color: #000; font-weight: bold;">Export PDF Report</a>
+          <button id="refreshThreats" class="ghost">Refresh Intel</button>
         </div>
       </header>
 
-      <!-- Panels -->
       <div class="panels-container">
         <!-- Overview Panel -->
         <section id="overview" class="panel active">
-          <!-- Old UI Hero Scene -->
-          <div class="hero-scene" id="heroScene">
+          <div class="hero-scene">
             <div class="scene-copy">
-              <p class="eyebrow">Defensive cybersecurity dashboard</p>
-              <h2>Understand incidents without getting lost.</h2>
-              <p class="hero-text">One student-friendly SOC workspace for scanning your own lab network, checking CVEs, reviewing logs, detecting phishing signs, and following response steps.</p>
+              <p class="eyebrow">Computer Networks (CN) Monitoring & Security</p>
+              <h2>Real-Time Network Monitoring & Detection System</h2>
+              <p class="hero-text">Aligned with B.Tech CSE Curriculum (NEP 2020). Complete with packet analysis, modular rule detection, topology discovery, tamper-evident audit logging, and IoT telemetry monitoring.</p>
               <div class="scene-buttons">
-                <button class="primary hero-tab" data-target-tab="scanner">Start scan</button>
-                <button class="ghost hero-tab" data-target-tab="logs">Analyze logs</button>
-              </div>
-              <div class="hero-note">
-                <strong>Safe scope:</strong> private networks, local machines, lab systems, and authorized testing only.
-              </div>
-            </div>
-            <div class="cyber-stage" aria-hidden="true">
-              <div class="desk-plane"></div>
-              <div class="soc-monitor">
-                <div class="monitor-top">
-                  <span></span><span></span><span></span>
-                  <b>Defensive SOC Live</b>
-                </div>
-                <div class="monitor-grid">
-                  <div class="signal-card high"><small>Risk</small><strong>3 Alerts</strong><em>Needs review</em></div>
-                  <div class="signal-card"><small>Scanner</small><strong>Local lab</strong><em>Private range only</em></div>
-                  <div class="signal-card"><small>Vulnerabilities</small><strong>NVD + CISA</strong><em>Real sources</em></div>
-                  <div class="signal-card medium-card"><small>Phishing</small><strong>URL check</strong><em>URLhaus lookup</em></div>
-                </div>
-                <div class="chart-line"></div>
-                <div class="terminal-lines">
-                  <span>$ nmap -sV 192.168.1.0/24</span>
-                  <span>22/tcp open ssh OpenSSH 8.9</span>
-                  <span>443/tcp open https nginx/1.24</span>
-                </div>
-              </div>
-              <div class="floating-label label-one">Logs</div>
-              <div class="floating-label label-two">CVEs</div>
-              <div class="floating-label label-three">Threat Intel</div>
-            </div>
-          </div>
-
-          <div class="explain-grid">
-            <div class="explain-card">
-              <span>01</span>
-              <strong>Find exposure</strong>
-              <p>Scan only your own private or local targets and see open services in plain language.</p>
-            </div>
-            <div class="explain-card">
-              <span>02</span>
-              <strong>Check real CVEs</strong>
-              <p>Search NVD and highlight CISA known exploited vulnerability context when available.</p>
-            </div>
-            <div class="explain-card">
-              <span>03</span>
-              <strong>Investigate faster</strong>
-              <p>Paste logs or suspicious messages and get readable indicators plus response steps.</p>
-            </div>
-          </div>
-
-          <!-- Real-Time Metrics and Charts Row -->
-          <div class="metrics-row">
-            <div class="metric-card danger-card">
-              <div class="metric-header">
-                <span>ACTIVE ALERTS</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
-              </div>
-              <div class="metric-body">
-                <span class="huge-number" id="activeAlertCount">23</span>
-                <div class="sub-numbers">
-                  <span class="critical-text">Critical</span>
-                  <span class="high-number" id="highAlertCount">114</span>
-                  <span>High</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="metric-card ok-card">
-              <div class="metric-header">
-                <span>HOSTS MONITORED</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <div class="metric-body">
-                <span class="huge-number" id="hostsCount">1,498</span>
-                <span class="card-tag">Online</span>
-              </div>
-            </div>
-
-            <div class="metric-card blue-card">
-              <div class="metric-header">
-                <span>NETWORK TRAFFIC</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-              </div>
-              <div class="metric-body">
-                <span class="huge-number">4.2</span>
-                <span class="card-tag">TB/day</span>
+                <button class="primary hero-tab" data-target-tab="packets">View Packet Analysis</button>
+                <button class="ghost hero-tab" data-target-tab="detection">Detection Engine</button>
               </div>
             </div>
           </div>
-
-          <div class="dashboard-grid">
-            <!-- Left -->
-            <div class="dashboard-col">
-              <div class="widget-card">
-                <div class="widget-header"><h3>THREAT LEVEL: SEVERE</h3></div>
-                <div class="widget-body center-body">
-                  <div class="gauge-container">
-                    <svg width="200" height="200" viewBox="0 0 200 200" class="gauge-svg">
-                      <defs>
-                        <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stop-color="#ff3b50"/>
-                          <stop offset="50%" stop-color="#ffaa00"/>
-                          <stop offset="100%" stop-color="#ff3b50"/>
-                        </linearGradient>
-                        <filter id="gaugeGlow">
-                          <feGaussianBlur stdDeviation="3" result="blur"/>
-                          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                      </defs>
-                      <!-- Tick marks -->
-                      <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
-                        <line x1="100" y1="18" x2="100" y2="28" transform="rotate(0,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(30,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(60,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="28" transform="rotate(90,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(120,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(150,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="28" transform="rotate(180,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(210,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(240,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="28" transform="rotate(270,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(300,100,100)"/>
-                        <line x1="100" y1="18" x2="100" y2="24" transform="rotate(330,100,100)"/>
-                      </g>
-                      <!-- Background track -->
-                      <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12"/>
-                      <!-- Filled arc: 87% of circumference (2*pi*80 = 502.6, 87% = 437.3, offset = 502.6 - 437.3 = 65.3) -->
-                      <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="502.6" stroke-dashoffset="65.3" transform="rotate(-90,100,100)" filter="url(#gaugeGlow)"/>
-                    </svg>
-                    <div class="gauge-value"><span class="gauge-pct">87</span><span class="gauge-unit">%</span></div>
-                    <div class="gauge-label">SEVERITY INDEX</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="widget-card">
-                <div class="widget-header"><h3>CRITICAL INCIDENTS</h3></div>
-                <div class="widget-body">
-                  <table class="incidents-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Priority</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody id="criticalIncidentsBody">
-                      <!-- Real data loaded via app.js -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+          <div class="card-grid" style="margin-top: 20px;">
+            <div class="card">
+              <h3>Total Packets Analyzed</h3>
+              <p id="totalPacketsCount" style="font-size: 2rem; font-weight: bold; color: #00e676;">Loading...</p>
             </div>
-
-            <!-- Right -->
-            <div class="dashboard-col">
-              <div class="widget-card map-widget">
-                <div class="widget-header"><h3>LIVE THREAT INTEL MAP</h3><span class="widget-badge">Real-time</span></div>
-                <div class="widget-body relative-body">
-                  <div class="world-map-svg">
-                    <svg viewBox="0 0 1010 505" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <radialGradient id="mapBg" cx="50%" cy="50%" r="60%">
-                          <stop offset="0%" stop-color="rgba(0,229,255,0.04)"/>
-                          <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-                        </radialGradient>
-                        <filter id="glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                      </defs>
-                      <rect width="1010" height="505" fill="url(#mapBg)" rx="8"/>
-                      <!-- Grid lines -->
-                      <g stroke="rgba(0,229,255,0.06)" stroke-width="0.5">
-                        <line x1="0" y1="126" x2="1010" y2="126"/><line x1="0" y1="252" x2="1010" y2="252"/><line x1="0" y1="378" x2="1010" y2="378"/>
-                        <line x1="252" y1="0" x2="252" y2="505"/><line x1="505" y1="0" x2="505" y2="505"/><line x1="757" y1="0" x2="757" y2="505"/>
-                      </g>
-                      <!-- Realistic simplified world map continental outlines -->
-                      <g fill="none" stroke="rgba(0,229,255,0.35)" stroke-width="1.2" stroke-linejoin="round">
-                        <!-- North America -->
-                        <path d="M140,55 L175,48 L210,52 L235,65 L260,58 L280,70 L275,95 L290,105 L285,130 L270,145 L255,155 L240,180 L220,195 L200,205 L185,225 L175,245 L165,250 L155,240 L140,210 L130,185 L120,160 L110,140 L105,120 L110,100 L120,80 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- Central America -->
-                        <path d="M165,250 L175,260 L180,275 L190,285 L195,300 L200,310 L210,315" fill="rgba(0,229,255,0.04)"/>
-                        <!-- South America -->
-                        <path d="M210,315 L230,305 L255,310 L270,325 L280,350 L285,375 L275,400 L260,420 L245,435 L230,440 L220,430 L215,410 L210,390 L205,370 L200,350 L205,330 L210,315 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- Europe -->
-                        <path d="M460,50 L480,45 L500,50 L520,55 L535,65 L540,80 L530,95 L520,105 L505,115 L495,130 L485,140 L475,135 L465,125 L455,110 L450,90 L455,70 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- UK -->
-                        <path d="M440,70 L445,60 L450,65 L448,75 L442,78 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- Africa -->
-                        <path d="M475,155 L495,150 L520,155 L545,165 L560,185 L570,210 L575,240 L570,270 L560,300 L545,325 L525,345 L510,355 L495,350 L480,335 L470,310 L462,280 L458,250 L455,220 L460,190 L465,170 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- Middle East -->
-                        <path d="M540,120 L570,115 L595,125 L605,140 L600,160 L585,170 L565,165 L545,160 Z" fill="rgba(0,229,255,0.04)"/>
-                        <!-- Russia / Northern Asia -->
-                        <path d="M535,50 L580,40 L640,35 L700,38 L760,45 L810,55 L840,65 L850,80 L835,90 L800,85 L750,80 L700,78 L650,75 L600,72 L560,68 L540,60 Z" fill="rgba(0,229,255,0.04)"/>
-                        <!-- India -->
-                        <path d="M640,150 L665,145 L680,160 L685,185 L675,210 L660,230 L645,240 L635,225 L630,200 L628,175 L635,160 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- China / East Asia -->
-                        <path d="M700,85 L740,90 L770,100 L790,115 L795,135 L785,155 L770,170 L750,175 L730,168 L715,155 L705,140 L700,120 L698,100 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- Southeast Asia -->
-                        <path d="M735,185 L755,180 L775,190 L780,210 L770,225 L755,230 L740,220 L735,200 Z" fill="rgba(0,229,255,0.04)"/>
-                        <!-- Japan -->
-                        <path d="M815,100 L820,90 L830,95 L828,110 L822,120 L815,115 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- Australia -->
-                        <path d="M770,330 L810,320 L845,330 L860,350 L855,375 L840,395 L815,400 L790,390 L775,370 L770,350 Z" fill="rgba(0,229,255,0.05)"/>
-                        <!-- Greenland -->
-                        <path d="M310,25 L340,20 L360,30 L355,50 L340,55 L320,48 L310,35 Z" fill="rgba(0,229,255,0.03)"/>
-                      </g>
-                      <!-- Attack vector lines with animated pulses -->
-                      <g filter="url(#glow)">
-                        <!-- Attack line 1: US East -> Europe -->
-                        <path d="M220,170 C350,120 400,100 490,110" fill="none" stroke="#ff3b50" stroke-width="1.5" stroke-dasharray="8,6" class="attack-vector"/>
-                        <!-- Attack line 2: East Asia -> US West -->
-                        <path d="M780,130 C850,80 900,60 950,50" fill="none" stroke="#ffaa00" stroke-width="1.2" stroke-dasharray="6,4" class="attack-vector"/>
-                        <!-- Attack line 3: Africa -> India -->
-                        <path d="M530,260 C580,230 610,200 645,180" fill="none" stroke="#00e5ff" stroke-width="1" stroke-dasharray="5,5" class="attack-vector secondary"/>
-                      </g>
-                      <!-- Hotspot pulsing dots -->
-                      <g>
-                        <circle cx="220" cy="170" r="5" fill="#ff3b50" opacity="0.9" class="pulse-dot"/>
-                        <circle cx="220" cy="170" r="5" fill="none" stroke="#ff3b50" stroke-width="1" class="pulse-ring"/>
-                        <circle cx="490" cy="110" r="4" fill="#00ff9d" opacity="0.9" class="pulse-dot"/>
-                        <circle cx="490" cy="110" r="4" fill="none" stroke="#00ff9d" stroke-width="1" class="pulse-ring"/>
-                        <circle cx="780" cy="130" r="4" fill="#ffaa00" opacity="0.8" class="pulse-dot"/>
-                        <circle cx="780" cy="130" r="4" fill="none" stroke="#ffaa00" stroke-width="1" class="pulse-ring"/>
-                        <circle cx="645" cy="180" r="3" fill="#00e5ff" opacity="0.8" class="pulse-dot"/>
-                      </g>
-                    </svg>
-                  </div>
-                  <div class="map-legend">
-                    <div class="legend-item"><span class="dot red"></span> SOURCE: <strong id="mapIpSource">198.51.100.45</strong></div>
-                    <div class="legend-item"><span class="dot green"></span> TARGET: <strong id="mapTarget">10.0.0.102</strong></div>
-                    <div class="legend-item"><span class="dot cyan"></span> TYPE: <strong id="mapAttackType">Brute Force</strong></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="widget-card">
-                <div class="widget-header"><h3>NETWORK ACTIVITY (LAST 24H)</h3><span class="widget-badge live">Live</span></div>
-                <div class="widget-body">
-                  <div class="line-chart">
-                    <svg viewBox="0 0 500 140" class="line-chart-svg" id="networkChart">
-                      <defs>
-                        <linearGradient id="chartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stop-color="#00ff9d" stop-opacity="0.35"/>
-                          <stop offset="100%" stop-color="#00ff9d" stop-opacity="0.0"/>
-                        </linearGradient>
-                        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stop-color="#00e5ff"/>
-                          <stop offset="50%" stop-color="#00ff9d"/>
-                          <stop offset="100%" stop-color="#00e5ff"/>
-                        </linearGradient>
-                        <filter id="chartGlow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                      </defs>
-                      <!-- Y-axis grid -->
-                      <g stroke="rgba(255,255,255,0.04)" stroke-width="0.5">
-                        <line x1="0" y1="20" x2="500" y2="20"/>
-                        <line x1="0" y1="45" x2="500" y2="45"/>
-                        <line x1="0" y1="70" x2="500" y2="70"/>
-                        <line x1="0" y1="95" x2="500" y2="95"/>
-                        <line x1="0" y1="120" x2="500" y2="120"/>
-                      </g>
-                      <!-- Y labels -->
-                      <g fill="rgba(140,160,186,0.5)" font-size="8" font-family="Inter,sans-serif">
-                        <text x="2" y="18">5 Gbps</text>
-                        <text x="2" y="43">4 Gbps</text>
-                        <text x="2" y="68">3 Gbps</text>
-                        <text x="2" y="93">2 Gbps</text>
-                        <text x="2" y="118">1 Gbps</text>
-                      </g>
-                      <!-- Smooth cubic bezier network activity curve -->
-                      <path d="M0,95 C25,90 40,85 62,78 C85,70 100,82 125,75 C150,68 165,55 187,48 C210,40 230,60 250,52 C275,42 290,30 312,25 C335,20 350,45 375,38 C400,30 420,22 437,18 C455,14 475,35 500,28" class="chart-area-path" fill="url(#chartGrad)" stroke="none"/>
-                      <path d="M0,95 C25,90 40,85 62,78 C85,70 100,82 125,75 C150,68 165,55 187,48 C210,40 230,60 250,52 C275,42 290,30 312,25 C335,20 350,45 375,38 C400,30 420,22 437,18 C455,14 475,35 500,28" class="chart-line-path" filter="url(#chartGlow)"/>
-                      <!-- Data point dots -->
-                      <g fill="#00ff9d">
-                        <circle cx="62" cy="78" r="2.5"/>
-                        <circle cx="125" cy="75" r="2.5"/>
-                        <circle cx="187" cy="48" r="2.5"/>
-                        <circle cx="250" cy="52" r="2.5"/>
-                        <circle cx="312" cy="25" r="2.5"/>
-                        <circle cx="375" cy="38" r="2.5"/>
-                        <circle cx="437" cy="18" r="2.5"/>
-                        <circle cx="500" cy="28" r="2.5"/>
-                      </g>
-                    </svg>
-                    <div class="chart-timeline">
-                      <span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>Now</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="card">
+              <h3>Active Detection Alerts</h3>
+              <p id="activeAlertsCount" style="font-size: 2rem; font-weight: bold; color: #ff1744;">Loading...</p>
+            </div>
+            <div class="card">
+              <h3>Audit Chain Integrity</h3>
+              <p id="auditChainStatus" style="font-size: 1.5rem; font-weight: bold; color: #00b0ff;">VALID (100%)</p>
             </div>
           </div>
         </section>
 
-        <!-- Network Scanner -->
+        <!-- Packet Analyzer Panel -->
+        <section id="packets" class="panel">
+          <h2>Packet Analyzer & PCAP Decoder</h2>
+          <div class="card">
+            <h3>Offline PCAP File Upload</h3>
+            <p>Upload a <code>.pcap</code> or <code>.pcapng</code> file to decode layers <code>Ethernet -> IP -> TCP/UDP/ICMP/ARP/DNS</code>.</p>
+            <input type="file" id="pcapFileInput" accept=".pcap,.pcapng">
+            <button id="btnUploadPcap" class="primary" style="margin-top: 10px;">Upload & Parse PCAP</button>
+            <div id="pcapResultStatus" style="margin-top:10px; font-weight:bold;"></div>
+          </div>
+          <div class="card-grid" style="margin-top: 20px;">
+            <div class="card">
+              <h3>Protocol Breakdown</h3>
+              <pre id="protocolBreakdown" class="code-box">Loading protocol metrics...</pre>
+            </div>
+            <div class="card">
+              <h3>Top Talkers (Source IPs)</h3>
+              <pre id="topTalkers" class="code-box">Loading top talkers...</pre>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 20px;">
+            <h3>Recent Decoded Packets Summary</h3>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left;" id="packetsTable">
+                <thead>
+                  <tr style="border-bottom: 1px solid #333; color: #888;">
+                    <th>Protocol</th>
+                    <th>Source IP</th>
+                    <th>Destination IP</th>
+                    <th>Ports</th>
+                    <th>Size (Bytes)</th>
+                    <th>Info</th>
+                  </tr>
+                </thead>
+                <tbody id="packetsTableBody">
+                  <tr><td colspan="6">Loading packet stream...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Detection Engine Panel -->
+        <section id="detection" class="panel">
+          <h2>Modular Rule-Based Detection Engine</h2>
+          <p>Scans decoded packet headers against rule definitions: <strong>Port Scan</strong> (T1046), <strong>ARP Spoofing</strong> (T1557), <strong>DNS Tunneling</strong> (T1071), <strong>SYN Flood</strong> (T1498), and <strong>Plaintext Auth</strong> (T1040).</p>
+          <button id="btnRunDetection" class="primary" style="margin-bottom: 15px;">Run Detection Rules Now</button>
+          <div class="card">
+            <h3>Generated Security Alerts</h3>
+            <div id="alertsContainer">Loading security alerts...</div>
+          </div>
+        </section>
+
+        <!-- Topology & OS Fingerprint Panel -->
+        <section id="topology" class="panel">
+          <h2>Network Topology & OS Fingerprinting</h2>
+          <p>Discovers network topology (Gateway -> Switch -> Hosts) and performs TTL-based OS estimation.</p>
+          <div class="card-grid">
+            <div class="card">
+              <h3>Topology Nodes & Discovered Devices</h3>
+              <pre id="topologyNodes" class="code-box">Loading topology nodes...</pre>
+            </div>
+            <div class="card">
+              <h3>ICMP Traceroute & Hop Analysis</h3>
+              <button id="btnRunTraceroute" class="ghost" style="margin-bottom: 10px;">Run Traceroute (8.8.8.8)</button>
+              <pre id="tracerouteResult" class="code-box">Traceroute results will appear here.</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Audit Chain Panel -->
+        <section id="chain" class="panel">
+          <h2>Cryptographic SHA-256 Audit Chain</h2>
+          <p>Maintains a tamper-evident hash chain for security alerts and critical system events.</p>
+          <div class="card" style="margin-bottom: 15px;">
+            <h3>Integrity Verification Status</h3>
+            <button id="btnVerifyChain" class="primary">Verify Audit Chain Integrity</button>
+            <div id="chainVerificationBox" style="margin-top: 15px; font-size: 1.1rem; font-weight: bold; color: #00e676;">
+              Click button to perform verification scan.
+            </div>
+          </div>
+          <div class="card">
+            <h3>Audit Chain Blocks</h3>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1px solid #333; color: #888;">
+                    <th>Index</th>
+                    <th>Timestamp</th>
+                    <th>Payload Hash</th>
+                    <th>Previous Hash</th>
+                    <th>Block Hash</th>
+                  </tr>
+                </thead>
+                <tbody id="chainTableBody">
+                  <tr><td colspan="5">Loading chain blocks...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- IoT Monitor Panel -->
+        <section id="iot" class="panel">
+          <h2>IoT Network & Telemetry Monitor</h2>
+          <p>Subscribes to MQTT device telemetry, verifies whitelists, and flags thermal/frequency anomalies.</p>
+          <div class="card-grid">
+            <div class="card">
+              <h3>Approved Whitelist</h3>
+              <ul>
+                <li><code>ESP32_SENSOR_01</code> (192.168.1.50)</li>
+                <li><code>ESP32_SENSOR_02</code> (192.168.1.51)</li>
+                <li><code>CAM_GATEWAY_01</code> (192.168.1.75)</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Hardware-Free Offline Simulator</h3>
+              <p>Run <code>python simulator.py</code> in terminal to inject live synthetic MQTT telemetry!</p>
+              <button id="btnRefreshIoT" class="ghost">Refresh Telemetry Stream</button>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 20px;">
+            <h3>Live Telemetry Stream</h3>
+            <div id="iotTelemetryBox" class="code-box">Loading telemetry...</div>
+          </div>
+        </section>
+
+        <!-- Network Scanner Panel (Existing) -->
         <section id="scanner" class="panel">
           <h2>Network Scanner</h2>
-          <form id="scanForm" class="controls">
-            <label>Target CIDR or host
-              <input name="target" value="127.0.0.1" placeholder="192.168.1.0/28">
-            </label>
-            <label>Ports
-              <input name="ports" value="22,80,443,445,3389,8080">
-            </label>
-            <button class="primary">Run authorized scan</button>
-          </form>
-          <div id="scanResults" class="list"></div>
+          <div class="card">
+            <label for="scanTarget">Target IP / Private Range</label>
+            <input type="text" id="scanTarget" value="192.168.1.1">
+            <button id="btnScan" class="primary" style="margin-top:10px;">Execute Scan</button>
+            <pre id="scanResults" class="code-box" style="margin-top:15px;">Scan results will appear here.</pre>
+          </div>
         </section>
 
-        <!-- Vulnerability Checker -->
+        <!-- Vulnerabilities Panel (Existing) -->
         <section id="vulns" class="panel">
-          <h2>Vulnerability Checker</h2>
-          <form id="vulnForm" class="controls">
-            <label>Product, vendor, or CVE
-              <input name="keyword" value="Microsoft Outlook" placeholder="Apache Struts or CVE-2023-34362">
-            </label>
-            <button class="primary">Search NVD + CISA KEV</button>
-          </form>
-          <div id="vulnResults" class="list"></div>
+          <h2>Vulnerability Lookup</h2>
+          <div class="card">
+            <label for="vulnQuery">CVE ID / Keyword</label>
+            <input type="text" id="vulnQuery" value="CVE-2023-38606">
+            <button id="btnVuln" class="primary" style="margin-top:10px;">Lookup CVE</button>
+            <pre id="vulnResults" class="code-box" style="margin-top:15px;">Lookup results will appear here.</pre>
+          </div>
         </section>
 
-        <!-- Log Analysis -->
+        <!-- Log Analysis Panel (Existing) -->
         <section id="logs" class="panel">
           <h2>Log Analysis</h2>
-          <form id="logForm">
-            <textarea name="logs" spellcheck="false">Apr 30 10:23:11 server sshd[2210]: Failed password for invalid user admin from 203.0.113.8 port 55512 ssh2
-Apr 30 10:26:41 workstation PowerShell -EncodedCommand SQBFAFgA
-Apr 30 10:30:04 server sudo: user : TTY=pts/0 ; PWD=/home/user ; USER=root ; COMMAND=/bin/cat /etc/shadow</textarea>
-            <button class="primary">Analyze logs</button>
-          </form>
-          <div id="logResults" class="list"></div>
+          <div class="card">
+            <textarea id="logInput" rows="6" placeholder="Paste log lines here..."></textarea>
+            <button id="btnAnalyzeLogs" class="primary" style="margin-top:10px;">Analyze Log Patterns</button>
+            <pre id="logResults" class="code-box" style="margin-top:15px;">Analysis output will appear here.</pre>
+          </div>
         </section>
 
-        <!-- Phishing Detector -->
+        <!-- Phishing Detector Panel (Existing) -->
         <section id="phishing" class="panel">
           <h2>Phishing Detector</h2>
-          <form id="phishForm">
-            <textarea name="text" spellcheck="false">Urgent action required: verify your account at http://example-login-security.com before your password expires.</textarea>
-            <button class="primary">Check message and URLs</button>
-          </form>
-          <div id="phishResults" class="list"></div>
+          <div class="card">
+            <textarea id="phishInput" rows="4" placeholder="Enter message text or URL..."></textarea>
+            <button id="btnCheckPhish" class="primary" style="margin-top:10px;">Check Message & URL</button>
+            <pre id="phishResults" class="code-box" style="margin-top:15px;">Phishing scan results will appear here.</pre>
+          </div>
         </section>
 
-        <!-- Incident Response -->
+        <!-- Incident Response Panel (Existing + PDF Export) -->
         <section id="response" class="panel">
-          <h2>Incident Response Checklist</h2>
-          <div class="checklist">
-            <label><input type="checkbox"> Confirm the alert and record time, affected user, host, IP, and evidence.</label>
-            <label><input type="checkbox"> Preserve logs and screenshots before making system changes.</label>
-            <label><input type="checkbox"> Isolate affected host or account if compromise is likely.</label>
-            <label><input type="checkbox"> Reset credentials and revoke active sessions for impacted accounts.</label>
-            <label><input type="checkbox"> Identify vulnerability, phishing source, or exposed service that started the incident.</label>
-            <label><input type="checkbox"> Patch, disable risky service, block indicators, and monitor for recurrence.</label>
-            <label><input type="checkbox"> Write a short post-incident note with root cause and prevention steps.</label>
+          <h2>Incident Response & Evaluation</h2>
+          <div class="card">
+            <h3>Download Official PDF Evaluation Report</h3>
+            <p>Generate a complete incident response document for lab submission and viva evaluation.</p>
+            <a href="/api/incidents/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 10px 18px; border-radius: 6px; background: #00e676; color: #000; font-weight: bold;">Download Incident Report (.txt/.pdf)</a>
+          </div>
+          <div class="card" style="margin-top: 20px;">
+            <h3>Active SOC Incidents</h3>
+            <div id="incidentsContainer">Loading incidents...</div>
           </div>
         </section>
       </div>
     </main>
   </div>
 
-  <script src="/app.js"></script>
+  <script src="/app.js?v=10"></script>
 </body>
 </html>
