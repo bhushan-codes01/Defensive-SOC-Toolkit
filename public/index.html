@@ -73,9 +73,10 @@
           <div class="version-tag">CN Monitoring & Detection System v3.0 (NEP 2020)</div>
           <h1 id="pageTitle">OVERVIEW - REAL-TIME THREAT MONITOR</h1>
         </div>
-        <div class="header-actions">
-          <a href="/api/incidents/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 8px 14px; border-radius: 6px; background: #00e676; color: #000; font-weight: bold;">Export PDF Report</a>
-          <button id="refreshThreats" class="ghost">Refresh Intel</button>
+        <div class="header-actions" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="/api/incidents/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 8px 14px; border-radius: 6px; background: #00e676; color: #000; font-weight: bold;">Incident PDF</a>
+          <a href="/api/audit/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 8px 14px; border-radius: 6px; background: #00e5ff; color: #000; font-weight: bold;">Audit PDF</a>
+          <a href="/audit-report" target="_blank" class="ghost" style="text-decoration:none; display:inline-block; padding: 8px 14px; border-radius: 6px;">Web Audit</a>
         </div>
       </header>
 
@@ -185,10 +186,15 @@
           <p>Maintains a tamper-evident hash chain for security alerts and critical system events.</p>
           <div class="card" style="margin-bottom: 15px;">
             <h3>Integrity Verification Status</h3>
-            <button id="btnVerifyChain" class="primary">Verify Audit Chain Integrity</button>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+              <button id="btnVerifyChain" class="primary">Verify Audit Chain Integrity</button>
+              <a href="/api/audit/export-pdf" target="_blank" class="primary" style="text-decoration:none;display:inline-block;padding:12px 24px;border-radius:8px;background:#00e5ff;color:#000;font-weight:700;">Download Audit PDF</a>
+              <a href="/audit-report" target="_blank" class="ghost" style="text-decoration:none;display:inline-block;padding:12px 24px;border-radius:8px;">Open Web Audit Report</a>
+            </div>
             <div id="chainVerificationBox" style="margin-top: 15px; font-size: 1.1rem; font-weight: bold; color: #00e676;">
               Click button to perform verification scan.
             </div>
+            <pre id="chainMetaBox" class="code-box" style="margin-top:10px;">Audit metadata will appear here after verification.</pre>
           </div>
           <div class="card">
             <h3>Audit Chain Blocks</h3>
@@ -282,9 +288,18 @@
         <section id="response" class="panel">
           <h2>Incident Response & Evaluation</h2>
           <div class="card">
-            <h3>Download Official PDF Evaluation Report</h3>
-            <p>Generate a complete incident response document for lab submission and viva evaluation.</p>
-            <a href="/api/incidents/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 10px 18px; border-radius: 6px; background: #00e676; color: #000; font-weight: bold;">Download Incident Report (.txt/.pdf)</a>
+            <h3>Export Official Reports (PDF + Web Audit)</h3>
+            <p>Generate styled incident + tamper-evident audit documents for lab submission and viva evaluation.</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+              <a href="/api/incidents/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 10px 18px; border-radius: 6px; background: #00e676; color: #000; font-weight: bold;">Incident PDF</a>
+              <a href="/api/audit/export-pdf" target="_blank" class="primary" style="text-decoration:none; display:inline-block; padding: 10px 18px; border-radius: 6px; background: #00e5ff; color: #000; font-weight: bold;">Audit PDF</a>
+              <a href="/audit-report" target="_blank" class="ghost" style="text-decoration:none; display:inline-block; padding: 10px 18px; border-radius: 6px;">Web Audit Report</a>
+              <a href="/api/incidents/export-pdf?format=txt" target="_blank" class="ghost" style="text-decoration:none; display:inline-block; padding: 10px 18px; border-radius: 6px;">TXT fallback</a>
+            </div>
+            <div style="margin-top:14px;">
+              <button id="btnLoadAuditSummary" class="ghost">Load Live Audit Summary</button>
+              <pre id="auditSummaryBox" class="code-box" style="margin-top:10px;">Click to load consolidated audit JSON (incidents + alerts + packets + chain + IoT).</pre>
+            </div>
           </div>
           <div class="card" style="margin-top: 20px;">
             <h3>Active SOC Incidents</h3>
@@ -295,6 +310,6 @@
     </main>
   </div>
 
-  <script src="/app.js?v=10"></script>
+  <script src="/app.js?v=11"></script>
 </body>
 </html>

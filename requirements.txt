@@ -2,3 +2,4 @@
 scapy>=2.5.0
 paho-mqtt>=1.6.1
 pytest>=7.0.0
+reportlab>=3.6.0

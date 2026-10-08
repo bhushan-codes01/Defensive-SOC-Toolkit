@@ -199,10 +199,13 @@ if ($("#btnVerifyChain")) {
       const res = await api("/api/chain/verify");
       const box = $("#chainVerificationBox");
       if (res.is_valid) {
-        box.innerHTML = `<span style="color:#00e676;">✔ Audit Chain Verified Complete! Total Blocks: ${res.total_blocks} | Merkle Root: ${res.merkle_root.slice(0, 16)}...</span>`;
+        box.innerHTML = `<span style="color:#00e676;">✔ Audit Chain Verified Complete! Total Blocks: ${res.total_blocks} | Merkle Root: ${res.merkle_root.slice(0, 24)}...</span>`;
+        if ($("#auditChainStatus")) $("#auditChainStatus").textContent = `VALID (${res.total_blocks} blocks)`;
       } else {
         box.innerHTML = `<span style="color:#ff1744;">✖ TAMPERING DETECTED! Broken Block Indices: [${res.broken_indices.join(", ")}]</span>`;
+        if ($("#auditChainStatus")) $("#auditChainStatus").textContent = "TAMPERED";
       }
+      if ($("#chainMetaBox")) $("#chainMetaBox").textContent = JSON.stringify(res, null, 2);
     } catch (err) {
       alert(`Audit verification failed: ${err.message}`);
     } finally {
@@ -240,6 +243,31 @@ async function loadIncidents() {
   } catch (err) {
     console.error("Failed to load incidents", err);
   }
+}
+
+// 7. Live consolidated audit summary (web audit JSON)
+if ($("#btnLoadAuditSummary")) {
+  $("#btnLoadAuditSummary").addEventListener("click", async () => {
+    const btn = $("#btnLoadAuditSummary");
+    setLoading(btn, true);
+    try {
+      const data = await api("/api/audit/report");
+      if ($("#auditSummaryBox")) {
+        const summary = {
+          generated_at: data.generated_at,
+          totals: data.totals,
+          severity_counts: data.severity_counts,
+          rule_counts: data.rule_counts,
+          verification: data.verification,
+        };
+        $("#auditSummaryBox").textContent = JSON.stringify(summary, null, 2);
+      }
+    } catch (err) {
+      if ($("#auditSummaryBox")) $("#auditSummaryBox").textContent = `Audit load failed: ${err.message}`;
+    } finally {
+      setLoading(btn, false);
+    }
+  });
 }
 
 // Existing Action Handlers
