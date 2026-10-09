@@ -1,11 +1,14 @@
+import os
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC_DIR = ROOT / "public"
 
-HOST = "127.0.0.1"
-DEFAULT_PORT = 8765
+# Bind to 0.0.0.0 by default so cloud hosts (Render/Railway/Fly) can route traffic.
+# Override locally with HOST=127.0.0.1 if needed.
+HOST = os.environ.get("HOST", "0.0.0.0")
+DEFAULT_PORT = int(os.environ.get("PORT", "8765"))
 USER_AGENT = "Mozilla/5.0 StudentDefensiveSOC/1.0"
 CACHE_TTL_SECONDS = 900
 
